@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -23,12 +24,13 @@ public class TodoTest {
     TodoReferenceRepository todoReferenceRepository;
 
     private final String REFERRED_FROM_CONTENT = "FromContent";
-    private final String REFERRED_TO_CONTENT = "ToContent";
+    private final String REFERRED_TO_CONTENT1 = "ToContent1";
+    private final String REFERRED_TO_CONTENT2 = "ToContent2";
 
     @Before
     public void init() {
         Todo toTodo = todoRepository.save(Todo.builder()
-                .content(REFERRED_TO_CONTENT)
+                .content(REFERRED_TO_CONTENT1)
                 .isComplete(false)
                 .createdDate(LocalDateTime.now())
                 .updatedDate(LocalDateTime.now())
@@ -41,20 +43,31 @@ public class TodoTest {
                 .updatedDate(LocalDateTime.now())
                 .build();
 
-        fromTodo.addReference(TodoReference.builder()
-                    .referredToId(toTodo.getId())
-                    .build());
-        todoRepository.save(fromTodo);
+        fromTodo = todoRepository.save(fromTodo);
+        TodoReference todoReference1 = new TodoReference();
+        todoReference1.setReferredFromId(fromTodo.getId());
+        todoReference1.setReferredTo(toTodo);
+        todoReferenceRepository.save(todoReference1);
+
+        Todo toTodo2 = todoRepository.save(Todo.builder()
+                .content(REFERRED_TO_CONTENT2)
+                .isComplete(false)
+                .createdDate(LocalDateTime.now())
+                .updatedDate(LocalDateTime.now())
+                .build());
+
+        TodoReference todoReference2 = new TodoReference();
+        todoReference2.setReferredTo(toTodo2);
+        todoReference2.setReferredFromId(fromTodo.getId());
+        todoReferenceRepository.save(todoReference2);
     }
 
     @Test
     public void TestCreatedAndFind() {
         Todo fromTodo = todoRepository.findByContent(REFERRED_FROM_CONTENT);
         assertEquals(REFERRED_FROM_CONTENT, fromTodo.getContent());
-        Todo toTodo = todoRepository.findById(
-                ((TodoReference)fromTodo.getReferences().toArray()[0]).getReferredToId()
-        ).get();
-        assertEquals(REFERRED_TO_CONTENT, toTodo.getContent());
+        List<TodoReference> todoReferences = todoReferenceRepository.findByReferredFromId(fromTodo.getId());
+        assertEquals(2, todoReferences.size());
 
     }
 }

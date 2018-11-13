@@ -6,12 +6,10 @@ import lombok.Getter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
 
 @Getter
 @Entity
-@Table
+@Table(name = "TODO")
 @Builder
 public class Todo implements Serializable {
     private static final long serialVersionUID = -4542748891757151161L;
@@ -33,14 +31,4 @@ public class Todo implements Serializable {
     @Column
     private LocalDateTime updatedDate;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "referredFromId")
-    private Collection<TodoReference> references;
-
-    public void addReference(TodoReference todoReference) {
-        if (this.references == null) {
-            this.references = new ArrayList<>();
-        }
-        this.references.add(todoReference);
-    }
 }

@@ -1,14 +1,14 @@
 package com.wonho.todolist.domain;
 
-import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
-@Table
-@Builder
+@Table(name = "TODO_REFERENCE")
+@Data
 public class TodoReference {
     @Id
     @Column
@@ -18,7 +18,8 @@ public class TodoReference {
     @Column
     private Long referredFromId;
 
-    @Column
-    private Long referredToId;
+    @ManyToOne
+    @JoinColumn(name = "referredToId", nullable = false)
+    private Todo referredTo;
 
 }
