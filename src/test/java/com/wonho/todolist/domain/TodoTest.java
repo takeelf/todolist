@@ -1,7 +1,7 @@
 package com.wonho.todolist.domain;
 
-import com.wonho.todolist.repositories.TodoReferenceRepository;
-import com.wonho.todolist.repositories.TodoRepository;
+import com.wonho.todolist.repository.TodoReferenceRepository;
+import com.wonho.todolist.repository.TodoRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,7 +10,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -28,6 +27,7 @@ public class TodoTest {
     private final String REFERRED_TO_CONTENT1 = "ToContent1";
     private final String REFERRED_TO_CONTENT2 = "ToContent2";
 
+    // 1,2,3의 Todo를 생성하고 2번의 todo에 1,3번을 참조 저장
     @Before
     public void init() {
         Todo toTodo = todoRepository.save(Todo.builder()

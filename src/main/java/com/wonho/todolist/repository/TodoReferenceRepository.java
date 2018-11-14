@@ -1,4 +1,4 @@
-package com.wonho.todolist.repositories;
+package com.wonho.todolist.repository;
 
 import com.wonho.todolist.domain.TodoReference;
 import org.springframework.data.jpa.repository.JpaRepository;
