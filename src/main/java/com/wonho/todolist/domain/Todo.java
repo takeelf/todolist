@@ -1,15 +1,16 @@
 package com.wonho.todolist.domain;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-@Getter
 @Entity
 @Table(name = "TODO")
+@Data
 @Builder
 public class Todo implements Serializable {
     private static final long serialVersionUID = -4542748891757151161L;
@@ -30,5 +31,19 @@ public class Todo implements Serializable {
 
     @Column
     private LocalDateTime updatedDate;
+
+    @OneToMany(mappedBy = "referredFrom")
+    private List<TodoReference> references;
+
+    public void addReference(TodoReference todoReference) {
+        if (this.references == null) {
+            this.references = new ArrayList<>();
+        }
+        this.references.add(todoReference);
+    }
+
+    public String toString() {
+        return Long.toString(id) + ":" + content;
+    }
 
 }

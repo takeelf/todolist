@@ -15,11 +15,14 @@ public class TodoReference {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private Long referredFromId;
-
     @ManyToOne
-    @JoinColumn(name = "referredToId", nullable = false)
-    private Todo referredTo;
+    @JoinColumn(name = "referredFromId")
+    private Todo referredFrom;
 
+    @Column
+    private Long referredToId;
+
+    public String toString() {
+        return Long.toString(referredFrom.getId()) + ":" + Long.toString(referredToId);
+    }
 }

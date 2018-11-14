@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -43,11 +44,14 @@ public class TodoTest {
                 .updatedDate(LocalDateTime.now())
                 .build();
 
+
         fromTodo = todoRepository.save(fromTodo);
         TodoReference todoReference1 = new TodoReference();
-        todoReference1.setReferredFromId(fromTodo.getId());
-        todoReference1.setReferredTo(toTodo);
-        todoReferenceRepository.save(todoReference1);
+        todoReference1.setReferredFrom(fromTodo);
+        todoReference1.setReferredToId(toTodo.getId());
+        TodoReference savedTodoReference = todoReferenceRepository.save(todoReference1);
+        fromTodo.addReference(savedTodoReference);
+        fromTodo = todoRepository.save(fromTodo);
 
         Todo toTodo2 = todoRepository.save(Todo.builder()
                 .content(REFERRED_TO_CONTENT2)
@@ -57,9 +61,12 @@ public class TodoTest {
                 .build());
 
         TodoReference todoReference2 = new TodoReference();
-        todoReference2.setReferredTo(toTodo2);
-        todoReference2.setReferredFromId(fromTodo.getId());
-        todoReferenceRepository.save(todoReference2);
+        todoReference2.setReferredToId(toTodo2.getId());
+        todoReference2.setReferredFrom(fromTodo);
+        savedTodoReference = todoReferenceRepository.save(todoReference2);
+        fromTodo.addReference(savedTodoReference);
+        todoRepository.save(fromTodo);
+
     }
 
     @Test
