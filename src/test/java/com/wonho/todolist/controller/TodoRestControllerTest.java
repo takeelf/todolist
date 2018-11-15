@@ -27,7 +27,7 @@ public class TodoRestControllerTest {
 
     @Test
     public void restOK() throws Exception {
-        mvc.perform(get("/checkService")
+        mvc.perform(get("/checkHealth")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
         String check = this.todoRestController.checkHealth();

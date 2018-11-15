@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.wonho.todolist.exception.IsCompleteException;
+import com.wonho.todolist.request.ListRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,10 @@ public class TodoService {
 
     public String checkHealth() {
         return "OK";
+    }
+
+    public Page<Todo> getTodoList(ListRequest listRequest) {
+        return todoRepository.findAll(listRequest.buildPageable());
     }
 
     public Todo getTodo(TodoRequest todoRequest) {
@@ -63,8 +69,8 @@ public class TodoService {
     }
 
     public Todo referTodo(TodoRequest todoRequest) {
-        Todo todo = null;
-        if (todoRequest.getParameterTodo() == null) {
+        Todo todo = todoRequest.getParameterTodo();
+        if (todo == null) {
             todo = todoRepository.findById(todoRequest.getId()).orElse(null);
         }
         todo.setReferences(null);

@@ -1,5 +1,6 @@
 package com.wonho.todolist.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.Getter;
 
@@ -17,6 +18,7 @@ public class TodoReference {
 
     @ManyToOne
     @JoinColumn(name = "referredFromId")
+    @JsonBackReference
     private Todo referredFrom;
 
     @Column

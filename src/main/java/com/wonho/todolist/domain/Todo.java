@@ -1,5 +1,6 @@
 package com.wonho.todolist.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -33,6 +34,7 @@ public class Todo implements Serializable {
     private LocalDateTime updatedDate;
 
     @OneToMany(mappedBy = "referredFrom", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<TodoReference> references;
 
     public void addReference(TodoReference todoReference) {
