@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -88,6 +89,14 @@ public class TodoRepositoryTest {
         todoRepository.delete(targetTodo);
         Page<Todo> deletedList = todoRepository.findAll(PageRequest.of(1, 2, Sort.by("id").ascending()));
         assertEquals(1, deletedList.getContent().size());
+    }
+
+    @Test
+    public void findByIdList() {
+        Page<Todo> todoList1 = todoRepository.findAll(PageRequest.of(0, 10, Sort.by("id").ascending()));
+        List<Long> idList = todoList1.getContent().stream().map(Todo::getId).collect(Collectors.toList());
+        List<Todo> todoList2 = todoRepository.findByIdIn(idList);
+        assertEquals(todoList1.getContent().size(), todoList2.size());
     }
 
 }
