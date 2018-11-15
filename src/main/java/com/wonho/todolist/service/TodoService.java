@@ -74,6 +74,7 @@ public class TodoService {
             todo = todoRepository.findById(todoRequest.getId()).orElse(null);
         }
         todo.setReferences(null);
+        todoReferenceRepository.deleteByReferredFromId(todo.getId());
         List<Long> referenceId = todoRequest.getReferenceId();
         List<Todo> referenceTodoList = todoRepository.findByIdIn(referenceId);
         List<Long> confirmedId = referenceTodoList.stream().map(Todo::getId).collect(Collectors.toList());

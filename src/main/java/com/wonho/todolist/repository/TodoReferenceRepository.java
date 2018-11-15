@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface TodoReferenceRepository extends JpaRepository<TodoReference, Long> {
+    void deleteByReferredFromId(Long id);
+
     List<TodoReference> findByReferredFromId(Long id);
 
     List<TodoReference> findByReferredToId(Long id);
