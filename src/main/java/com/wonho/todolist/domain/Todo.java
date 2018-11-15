@@ -11,7 +11,7 @@ import java.util.List;
 @Entity
 @Table(name = "TODO")
 @Data
-@Builder
+@NoArgsConstructor
 public class Todo implements Serializable {
     private static final long serialVersionUID = -4542748891757151161L;
 
@@ -32,7 +32,7 @@ public class Todo implements Serializable {
     @Column
     private LocalDateTime updatedDate;
 
-    @OneToMany(mappedBy = "referredFrom")
+    @OneToMany(mappedBy = "referredFrom", fetch = FetchType.EAGER)
     private List<TodoReference> references;
 
     public void addReference(TodoReference todoReference) {
@@ -44,6 +44,17 @@ public class Todo implements Serializable {
 
     public String toString() {
         return Long.toString(id) + ":" + content;
+    }
+
+    @Builder
+    public Todo(String content,
+                Boolean isComplete,
+                LocalDateTime createdDate,
+                LocalDateTime updatedDate) {
+        this.content = content;
+        this.isComplete = isComplete;
+        this.createdDate = createdDate;
+        this.updatedDate = updatedDate;
     }
 
 }

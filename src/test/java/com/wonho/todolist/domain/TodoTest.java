@@ -71,7 +71,7 @@ public class TodoTest {
 
     @Test
     public void TestCreatedAndFind() {
-        Todo fromTodo = todoRepository.findByContent(REFERRED_FROM_CONTENT);
+        Todo fromTodo = todoRepository.findByContent(REFERRED_FROM_CONTENT).get(0);
         assertEquals(REFERRED_FROM_CONTENT, fromTodo.getContent());
         List<TodoReference> todoReferences = todoReferenceRepository.findByReferredFromId(fromTodo.getId());
         assertEquals(2, todoReferences.size());

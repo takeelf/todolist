@@ -3,7 +3,9 @@ package com.wonho.todolist.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.wonho.todolist.exception.IsCompleteException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,13 +27,32 @@ public class TodoService {
         return "OK";
     }
 
+    public Todo getTodo(TodoRequest todoRequest) {
+        return todoRepository.findById(todoRequest.getId()).orElse(null);
+    }
+
+    public List<Todo> getTodoByContent(TodoRequest todoRequest) {
+        return todoRepository.findByContent(todoRequest.getContent());
+    }
+
     public Todo saveTodo(TodoRequest todoRequest) {
         return todoRepository.save(todoRequest.buildCreateTodo());
     }
 
     @Transactional
     public Todo updateTodo(TodoRequest todoRequest) {
-        Todo todo = todoRepository.findById(todoRequest.getId()).get();
+        Todo todo = todoRepository.findById(todoRequest.getId()).orElse(null);
+        List<TodoReference> todoReferences = todoReferenceRepository.findByReferredToId(todoRequest.getId());
+        List<Long> fromIdList = todoReferences.stream()
+                .map(TodoReference::getReferredFrom)
+                .map(Todo::getId).collect(Collectors.toList());
+        List<Todo> checkTodoList = todoRepository.findByIdIn(fromIdList);
+        for (Todo check : checkTodoList) {
+            if (!check.getIsComplete()) {
+                throw new IsCompleteException("Check other todo complete");
+            }
+        }
+
         todo = todoRequest.buildUpdateTodo(todo);
         todo = todoRepository.save(todo);
         todoRequest.setParameterTodo(todo);
@@ -44,7 +65,7 @@ public class TodoService {
     public Todo referTodo(TodoRequest todoRequest) {
         Todo todo = null;
         if (todoRequest.getParameterTodo() == null) {
-            todo = todoRepository.findById(todoRequest.getId()).get();
+            todo = todoRepository.findById(todoRequest.getId()).orElse(null);
         }
         todo.setReferences(null);
         List<Long> referenceId = todoRequest.getReferenceId();

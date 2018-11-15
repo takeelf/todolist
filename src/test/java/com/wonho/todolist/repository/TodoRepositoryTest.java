@@ -78,7 +78,7 @@ public class TodoRepositoryTest {
         Todo targetTodo = todoList1.getContent().get(1);
         targetTodo.setContent(TODO_UPDATE);
         targetTodo = todoRepository.save(targetTodo);
-        Todo updatedTodo = todoRepository.findById(targetTodo.getId()).get();
+        Todo updatedTodo = todoRepository.findById(targetTodo.getId()).orElse(null);
         assertEquals(TODO_UPDATE, updatedTodo.getContent());
     }
 

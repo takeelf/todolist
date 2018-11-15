@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface TodoReferenceRepository extends JpaRepository<TodoReference, Long> {
     List<TodoReference> findByReferredFromId(Long id);
+
+    List<TodoReference> findByReferredToId(Long id);
 }

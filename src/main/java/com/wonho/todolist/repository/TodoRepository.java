@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface TodoRepository extends JpaRepository<Todo, Long> {
     Page<Todo> findAll(Pageable pageable);
 
-    Todo findByContent(String content);
+    List<Todo> findByContent(String content);
 
     List<Todo> findByIdIn(List<Long> idList);
 }
