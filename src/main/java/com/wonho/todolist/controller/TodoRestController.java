@@ -14,6 +14,7 @@ import com.wonho.todolist.domain.Todo;
 import com.wonho.todolist.service.TodoService;
 
 @RestController
+@RequestMapping("/api/todo")
 public class TodoRestController {
 
     @Autowired
