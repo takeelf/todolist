@@ -53,9 +53,11 @@ public class TodoService {
                 .map(TodoReference::getReferredFrom)
                 .map(Todo::getId).collect(Collectors.toList());
         List<Todo> checkTodoList = todoRepository.findByIdIn(fromIdList);
-        for (Todo check : checkTodoList) {
-            if (!check.getIsComplete()) {
-                throw new IsCompleteException("Check other todo complete");
+        if (todoRequest.getIsComplete() != null && todoRequest.getIsComplete()) {
+            for (Todo check : checkTodoList) {
+                if (!check.getIsComplete()) {
+                    throw new IsCompleteException("Check other todo complete");
+                }
             }
         }
 
@@ -82,14 +84,19 @@ public class TodoService {
             TodoReference todoReference = new TodoReference();
             todoReference.setReferredFrom(todo);
             todoReference.setReferredToId(todoId);
-            todoReference = todoReferenceRepository.save(todoReference);
-            todo.addReference(todoReference);
+            if (todo.getId() != todoId) {
+                todoReference = todoReferenceRepository.save(todoReference);
+                todo.addReference(todoReference);
+            }
         }
         return todoRepository.save(todo);
     }
 
+    @Transactional
     public void deleteTodo(TodoRequest todoRequest) {
         todoRepository.deleteById(todoRequest.getId());
+        todoReferenceRepository.deleteByReferredFromId(todoRequest.getId());
+        todoReferenceRepository.deleteByReferredToId(todoRequest.getId());
     }
 
 }

@@ -1,10 +1,103 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Todo list</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 <body>
-abcdefg
+    <div id="app">
+        <li v-for="todo in todos">
+            {{todo.id}} :
+            <span v-for="refer in todo.references">@{{refer.referredToId}} </span> :
+            <input v-model="todo.content" v-on:keyup.enter="updateContentTodo(todo.id, todo.content)"> :
+            <input type="checkbox" v-model="todo.isComplete" v-on:click="updateIsCompleteTodo(todo.id, !todo.isComplete)">
+            <button v-on:click="deleteTodo(todo.id)">삭제</button>
+            <input v-model="todo.referenceId" placeholder="ID를 넣으세요(ex:1,2)">
+            <button v-on:click="updateReferenceTodo(todo.id, todo.referenceId)"><- 참조하기</button>
+        </li>
+        <input v-model="todoContent" placeholder="할일을 입력하세요">
+        <button v-on:click="saveTodo(todoContent)">할일 추가</button>
+        <br/>
+        <br/>
+        Viewing {{pageNumber}} of {{totalPages}}
+        <span v-for="i in totalPages"><button v-on:click="getList(i, 10)">{{i}}</button></span>
+    </div>
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                todos: null,
+                totalPages: 1,
+                pageNumber: 1,
+                todoContent: ""
+            },
+            // define methods under the `methods` object
+            methods: {
+                getList: function (page, size, event) {
+                    axios.get('/api/todo?page=' + page + '&size=' + size)
+                        .then(function(response) {
+                            this.app.todos = response.data.content;
+                            this.app.totalPages = response.data.totalPages;
+                            this.app.pageNumber = response.data.pageable.pageNumber + 1;
+                        });
+                },
+                saveTodo: function (content) {
+                    axios.post('/api/todo?content=' + content)
+                        .then(function(response) {
+                            this.app.todoContent = "";
+                            this.app.getList(this.app.pageNumber, 10);
+                        });
+                },
+                updateContentTodo: function(id, content) {
+                    axios.put('/api/todo/' + id + "?content=" + content)
+                        .then(function(response) {
+                            this.app.getList(this.app.pageNumber, 10);
+                        })
+                        .catch(function (error) {
+                            this.app.getList(this.app.pageNumber, 10);
+                            alert("파라미터를 넣어 주세요.")
+                        })
+                },
+                updateIsCompleteTodo: function(id, isComplete) {
+                    axios.put('/api/todo/' + id + "?isComplete=" + isComplete)
+                        .then(function(response) {
+                            this.app.getList(this.app.pageNumber, 10);
+                        })
+                        .catch(function (error) {
+                            this.app.getList(this.app.pageNumber, 10);
+                            alert("참조된 할일이 마무리 되어야 합니다.")
+                        })
+                },
+                updateReferenceTodo: function(id, referenceId) {
+                    axios.put('/api/todo/' + id + "?referenceId=" + referenceId)
+                        .then(function(response) {
+                            this.app.getList(this.app.pageNumber, 10);
+                        })
+                        .catch(function (error) {
+                            this.app.getList(this.app.pageNumber, 10);
+                            alert("파라미터를 넣어 주세요.")
+                        })
+                },
+                deleteTodo: function (id) {
+                    axios.delete('/api/todo/' + id)
+                        .then(function(response) {
+                            this.app.getList(1, 10);
+                        });
+                }
+            },
+            mounted() {
+                axios.get('/api/todo?page=1&size=10')
+                    .then(function(response) {
+                        this.app.todos = response.data.content;
+                        this.app.totalPages = response.data.totalPages;
+                        this.app.pageNumber = response.data.pageable.pageNumber + 1;
+                    });
+            }
+        })
+
+    </script>
 </body>
 </html>

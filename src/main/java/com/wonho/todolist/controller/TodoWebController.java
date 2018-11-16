@@ -8,6 +8,7 @@ public class TodoWebController {
 
     @GetMapping("/")
     public String index() {
+
         return "/todolist";
     }
 }

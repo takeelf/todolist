@@ -25,7 +25,7 @@ public class TodoRestController {
         return todoService.checkHealth();
     }
 
-    @GetMapping("/")
+    @GetMapping
     public Page<Todo> getTodoList(ListRequest listRequest) {
         return todoService.getTodoList(listRequest);
     }
