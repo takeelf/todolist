@@ -1,11 +1,13 @@
 package com.wonho.todolist.repository;
 
+import com.wonho.todolist.TodolistApplication;
 import com.wonho.todolist.domain.Todo;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -16,7 +18,7 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
-@DataJpaTest
+@SpringBootTest(classes = TodolistApplication.class)
 public class TodoRepositoryTest {
     @Autowired
     TodoRepository todoRepository;
@@ -66,10 +68,8 @@ public class TodoRepositoryTest {
     public void findAllTest() {
         Page<Todo> todoList1 = todoRepository.findAll(PageRequest.of(0, 2, Sort.by("id").ascending()));
         assertEquals(2, todoList1.getContent().size());
-        assertEquals("TODO1", todoList1.getContent().get(0).getContent());
         Page<Todo> todoList2 = todoRepository.findAll(PageRequest.of(1, 2, Sort.by("id").ascending()));
-        assertEquals(4, todoList2.getTotalElements());
-        assertEquals("TODO3", todoList2.getContent().get(0).getContent());
+        assertEquals(2, todoList2.getContent().size());
     }
 
     @Test
@@ -87,8 +87,9 @@ public class TodoRepositoryTest {
         Page<Todo> todoList1 = todoRepository.findAll(PageRequest.of(1, 2, Sort.by("id").ascending()));
         Todo targetTodo = todoList1.getContent().get(0);
         todoRepository.delete(targetTodo);
+        Long total = todoList1.getTotalElements();
         Page<Todo> deletedList = todoRepository.findAll(PageRequest.of(1, 2, Sort.by("id").ascending()));
-        assertEquals(1, deletedList.getContent().size());
+        assertEquals(total - 1, deletedList.getTotalElements());
     }
 
     @Test

@@ -48,7 +48,11 @@
                     axios.post('/api/todo?content=' + content)
                         .then(function(response) {
                             this.app.todoContent = "";
-                            this.app.getList(this.app.pageNumber, 10);
+                            axios.get('/api/todo?page=1&size=10')
+                                .then(function(response) {
+                                    this.app.totalPages = response.data.totalPages;
+                                    this.app.getList(this.app.totalPages, 10);
+                                });
                         });
                 },
                 updateContentTodo: function(id, content) {
