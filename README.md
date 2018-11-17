@@ -1,4 +1,9 @@
-# This is wonho's TodoList
+# This is Choi Wonho's TodoList
+
+## Prerequisites
+
+- JDK 1.8 (https://www.oracle.com/technetwork/java/javase/downloads/index.html)
+- Gradle 4.10 (https://gradle.org/install/)
 
 ## Installing
 Using gradle
