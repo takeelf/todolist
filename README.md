@@ -9,6 +9,7 @@
 Using gradle
 ```bash
 $ git clone https://github.com/takeelf/todolist.git
+$ cd todolist/
 $ gradle build
 $ java -jar build/libs/todolist-0.0.1-SNAPSHOT.jar
 ```
